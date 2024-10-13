@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.WASM", "Blazor.WASM\Blazor.WASM.csproj", "{7ECEF621-E6E2-4567-9F68-7B5AA0A1FE2F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatAssistant", "CombatAssistant\CombatAssistant.csproj", "{25AD7B5E-36B1-4DEF-97E8-6B9C0A9702DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatAssistant.Tests", "CombatAssistant.Tests\CombatAssistant.Tests.csproj", "{BEF72BED-4882-41ED-9516-121D07F10B8C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{7ECEF621-E6E2-4567-9F68-7B5AA0A1FE2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7ECEF621-E6E2-4567-9F68-7B5AA0A1FE2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7ECEF621-E6E2-4567-9F68-7B5AA0A1FE2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25AD7B5E-36B1-4DEF-97E8-6B9C0A9702DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25AD7B5E-36B1-4DEF-97E8-6B9C0A9702DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25AD7B5E-36B1-4DEF-97E8-6B9C0A9702DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25AD7B5E-36B1-4DEF-97E8-6B9C0A9702DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEF72BED-4882-41ED-9516-121D07F10B8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEF72BED-4882-41ED-9516-121D07F10B8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEF72BED-4882-41ED-9516-121D07F10B8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEF72BED-4882-41ED-9516-121D07F10B8C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
