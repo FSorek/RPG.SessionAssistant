@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.Server", "Blazor.Server\Blazor.Server.csproj", "{F5C39C6F-81FD-4BFF-A459-8D4AAB416C2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.WASM", "Blazor.WASM\Blazor.WASM.csproj", "{7ECEF621-E6E2-4567-9F68-7B5AA0A1FE2F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,9 +8,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F5C39C6F-81FD-4BFF-A459-8D4AAB416C2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5C39C6F-81FD-4BFF-A459-8D4AAB416C2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F5C39C6F-81FD-4BFF-A459-8D4AAB416C2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F5C39C6F-81FD-4BFF-A459-8D4AAB416C2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7ECEF621-E6E2-4567-9F68-7B5AA0A1FE2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7ECEF621-E6E2-4567-9F68-7B5AA0A1FE2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7ECEF621-E6E2-4567-9F68-7B5AA0A1FE2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7ECEF621-E6E2-4567-9F68-7B5AA0A1FE2F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
