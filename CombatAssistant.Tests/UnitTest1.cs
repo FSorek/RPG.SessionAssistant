@@ -11,13 +11,9 @@ public class Tests
     public void GivenTwoPlayersInCombat_HigherInitiativePlayerActsFirst()
     {
         var combatProcessor = new CombatProcessor();
-        var playerOne = new Player("Gerlach");
-        var playerTwo = new Player("Robor Tinson");
-        int p1Initiative = 55;
-        int p2Initiative = 30;
+        var playerOne = combatProcessor.EnterCombat("playerOne", 55);
+        var playerTwo = combatProcessor.EnterCombat("playerTwo", 35);
 
-        combatProcessor.EnterCombat(playerOne, p1Initiative);
-        combatProcessor.EnterCombat(playerTwo, p2Initiative);
         var activePlayer = combatProcessor.GetActivePlayer();
         
         Assert.That(activePlayer, Is.SameAs(playerOne));
@@ -27,16 +23,21 @@ public class Tests
     public void GivenTwoPlayersInCombat_WhenFirstPlayerEndsTurn_SecondPlayerIsActive()
     {
         var combatProcessor = new CombatProcessor();
-        var playerOne = new Player("Gerlach");
-        var playerTwo = new Player("Robor Tinson");
-        int p1Initiative = 55;
-        int p2Initiative = 30;
+        var playerOne = combatProcessor.EnterCombat("playerOne", 55);
+        var playerTwo = combatProcessor.EnterCombat("playerTwo", 35);
 
-        var p1Combatant = combatProcessor.EnterCombat(playerOne, p1Initiative);
-        var p2Combatant = combatProcessor.EnterCombat(playerTwo, p2Initiative);
-        p1Combatant.EndTurn();
+        playerOne.EndTurn();
         var activePlayer = combatProcessor.GetActivePlayer();
         
         Assert.That(activePlayer, Is.SameAs(playerTwo));
+    }
+
+    public void Test()
+    {
+        var combatProcessor = new CombatProcessor();
+        var playerOne = combatProcessor.EnterCombat("playerOne", 55);
+        var playerTwo = combatProcessor.EnterCombat("playerTwo", 35);
+        
+        
     }
 }
