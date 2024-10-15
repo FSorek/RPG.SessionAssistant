@@ -1,0 +1,6 @@
+﻿services:
+  sessionassistant.api:
+    image: sessionassistant.api
+    build:
+      context: .
+      dockerfile: SessionAssistant.API/Dockerfile
