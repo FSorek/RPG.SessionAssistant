@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="MudBlazor" Version="8.0.0-preview.1" />
         <ProjectReference Include="..\Blazor.WebApp.Client\Blazor.WebApp.Client.csproj"/>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.10"/>
     </ItemGroup>
