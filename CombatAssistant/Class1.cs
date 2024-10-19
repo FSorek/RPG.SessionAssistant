@@ -1,6 +1,6 @@
 ﻿namespace CombatAssistant;
 
-public class CombatProcessor
+public class CombatEncounter
 {
     private readonly List<Combatant> _combatants = new List<Combatant>(); 
     public Combatant EnterCombat(string name, int initiative)

@@ -10,7 +10,7 @@ public class Tests
     [Test]
     public void GivenTwoPlayersInCombat_HigherInitiativePlayerActsFirst()
     {
-        var combatProcessor = new CombatProcessor();
+        var combatProcessor = new CombatEncounter();
         var playerOne = combatProcessor.EnterCombat("playerOne", 55);
         var playerTwo = combatProcessor.EnterCombat("playerTwo", 35);
 
@@ -22,7 +22,7 @@ public class Tests
     [Test]
     public void GivenTwoPlayersInCombat_WhenFirstPlayerEndsTurn_SecondPlayerIsActive()
     {
-        var combatProcessor = new CombatProcessor();
+        var combatProcessor = new CombatEncounter();
         var playerOne = combatProcessor.EnterCombat("playerOne", 55);
         var playerTwo = combatProcessor.EnterCombat("playerTwo", 35);
 
@@ -34,7 +34,7 @@ public class Tests
 
     public void Test()
     {
-        var combatProcessor = new CombatProcessor();
+        var combatProcessor = new CombatEncounter();
         var playerOne = combatProcessor.EnterCombat("playerOne", 55);
         var playerTwo = combatProcessor.EnterCombat("playerTwo", 35);
         

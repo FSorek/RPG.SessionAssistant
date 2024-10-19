@@ -9,9 +9,15 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Bogus" Version="35.6.1" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.10"/>
         <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.10" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
         <PackageReference Include="MudBlazor" Version="8.0.0-preview.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\SessionAssistant.Shared\SessionAssistant.Shared.csproj" />
     </ItemGroup>
 
 </Project>
