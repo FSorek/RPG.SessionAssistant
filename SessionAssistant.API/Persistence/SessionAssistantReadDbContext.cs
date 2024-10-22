@@ -7,24 +7,30 @@ public class SessionAssistantReadDbContext(DbContextOptions<SessionAssistantRead
     : DbContext(options)
 {
     public DbSet<EncounterDTO> Encounters { get; set; }
-
+    public DbSet<CombatantDTO> Combatants { get; set; }
+    public DbSet<SkillDTO> Skills { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<EncounterDTO>()
-            .OwnsMany(e => e.Combatants, c =>
-            {
-                c.ToTable("Combatants");
-                c.HasKey(cbt => cbt.Id);
-                c.OwnsMany(cbt => cbt.Skills, s =>
-                {
-                    s.ToTable("Skills");
-                    s.HasKey(sk => sk.Id);
-                });
-            })
+            .HasMany(e => e.Combatants)
+            .WithOne()
+            .HasForeignKey(c => c.EncounterId)
+            .IsRequired();
+        modelBuilder.Entity<EncounterDTO>()
+            .ToTable("Encounters")
             .HasData(
-            new EncounterDTO(){Id=1, Combatants = new List<CombatantDTO>(), CurrentRound = 1},
-            new EncounterDTO(){Id=2, Combatants = new List<CombatantDTO>(), CurrentRound = 1}
-        );
+                new EncounterDTO(){Id = 1, CurrentRound = 1, ActingInitiative = 100, ActingPriority = 0}, 
+                new EncounterDTO(){Id = 2, CurrentRound = 1, ActingInitiative = 100, ActingPriority = 0});
+        modelBuilder.Entity<CombatantDTO>()
+            .ToTable("Combatants")
+            .HasKey(c => c.Id);
+        modelBuilder.Entity<CombatantDTO>()
+            .HasMany(c => c.Skills)
+            .WithMany("Combatants");
+        modelBuilder.Entity<SkillDTO>()
+            .ToTable("Skills")
+            .HasKey(c => c.Id);
+
         base.OnModelCreating(modelBuilder);
     }
 }

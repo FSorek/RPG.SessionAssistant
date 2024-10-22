@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Blazor.WebApp.Hubs;
 using Microsoft.EntityFrameworkCore;
 using SessionAssistant.API.Persistence;
@@ -7,6 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<SessionAssistantReadDbContext>(opt =>
+{
+    opt.UseSqlite(string.Format("Filename={0}/SessionAssistant.db", AppDomain.CurrentDomain.BaseDirectory));
+});
+builder.Services.AddDbContext<SessionAssistantWriteDbContext>(opt =>
 {
     opt.UseSqlite(string.Format("Filename={0}/SessionAssistant.db", AppDomain.CurrentDomain.BaseDirectory));
 });
@@ -29,7 +34,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseCors();
 app.UseAuthorization();
 app.MapHub<EncounterHub>("/encounterhub");

@@ -20,4 +20,8 @@
       <ProjectReference Include="..\..\SessionAssistant.Shared\SessionAssistant.Shared.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Pages\Counter.razor" />
+    </ItemGroup>
+
 </Project>

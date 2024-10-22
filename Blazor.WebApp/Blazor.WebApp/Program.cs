@@ -1,5 +1,4 @@
 using Blazor.WebApp.Client.Combat;
-using Blazor.WebApp.Client.Pages;
 using Blazor.WebApp.Components;
 using Microsoft.AspNetCore.ResponseCompression;
 using MudBlazor.Services;
@@ -7,7 +6,7 @@ using MudBlazor.Services;
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddMudServices();
-builder.Services.AddHttpClient<CombatClient>(client => client.BaseAddress = new Uri("http://localhost:5039"));
+builder.Services.AddHttpClient<EncounterClient>(client => client.BaseAddress = new Uri("http://localhost:5039"));
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 builder.Services.AddResponseCompression(options => 

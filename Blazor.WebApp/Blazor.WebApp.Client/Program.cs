@@ -4,6 +4,6 @@ using MudBlazor.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.Services.AddMudServices();
-builder.Services.AddHttpClient<CombatClient>(client => client.BaseAddress = new Uri("http://localhost:5039"));
+builder.Services.AddHttpClient<EncounterClient>(client => client.BaseAddress = new Uri("http://localhost:5039"));
 
 await builder.Build().RunAsync();

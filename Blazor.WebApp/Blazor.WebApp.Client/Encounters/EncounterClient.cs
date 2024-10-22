@@ -3,7 +3,7 @@ using SessionAssistant.Shared.DTOs.Combat;
 
 namespace Blazor.WebApp.Client.Combat;
 
-public class CombatClient(HttpClient httpClient)
+public class EncounterClient(HttpClient httpClient)
 {
     public async Task<EncounterDTO> GetEncounterAsync(int id)
     {

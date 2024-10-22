@@ -1,9 +1,10 @@
 ﻿@page "/combat"
+@using Blazor.WebApp.Client.Combat
 @using Bogus
 @using Microsoft.AspNetCore.SignalR.Client
 @using SessionAssistant.Shared.DTOs.Combat
 @rendermode InteractiveWebAssembly
-@inject CombatClient HttpCombatClient
+@inject EncounterClient HttpEncounterClient
 @inject NavigationManager NavigationManager
 @implements IAsyncDisposable
 
@@ -117,7 +118,7 @@
             .RuleFor(c => c.Id, f => combatantIds++)
             .RuleFor(c => c.Name, f => f.Name.FullName())
             .RuleFor(c => c.Initiative, f => f.Random.Number(1, 10) + f.Random.Number(21, 50))
-            .RuleFor(c => c.CanAct, f => false)
+            .RuleFor(c => c.HasCompletedRound, f => false)
             .RuleFor(c => c.Attacks, f => f.Random.Number(1, 3))
             .RuleFor(c => c.Skills, f => 
                 new List<SkillDTO>()
@@ -133,7 +134,7 @@
 
     private async Task JoinCombat()
     {
-        PlayerCombatant = await HttpCombatClient.JoinCombat(1, PlayerCombatant);
+        PlayerCombatant = await HttpEncounterClient.JoinCombat(1, PlayerCombatant);
     }
 
     private async Task ConnectToCombatHub()
@@ -174,14 +175,17 @@
     {
         if (!_encounter.Combatants.Any())
             return "";
-        if(_encounter.Combatants.Where(c => c.CanAct).Contains(item))
+        if(_encounter.Combatants
+           .Where(c => c.Initiative == _encounter.ActingInitiative 
+                                 && c.ActPriority == _encounter.ActingPriority)
+           .Contains(item))
             return $"background-color:{Colors.Purple.Darken4}";
         return "";
     }
 
     private async Task UpdateEncounter()
     {
-        _encounter = await HttpCombatClient.GetEncounterAsync(1);
+        _encounter = await HttpEncounterClient.GetEncounterAsync(1);
         StateHasChanged();
     }
 
@@ -189,8 +193,8 @@
     private void OnClickDevEndTurn(MouseEventArgs obj)
     {
         _encounter.Combatants.Single(c => c.Id == _encounter.Combatants
-            .Where(c => c.CanAct)
-            .MaxBy(c => c.Initiative)!.Id).CanAct = false;
+            .Where(c => c.HasCompletedRound)
+            .MaxBy(c => c.Initiative)!.Id).HasCompletedRound = false;
         StateHasChanged();
     }
 

@@ -16,16 +16,40 @@ namespace SessionAssistant.API.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
 
-            modelBuilder.Entity("SessionAssistant.API.Persistence.Character", b =>
+            modelBuilder.Entity("CombatantDTOSkillDTO", b =>
+                {
+                    b.Property<int>("CombatantsId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SkillsId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("CombatantsId", "SkillsId");
+
+                    b.HasIndex("SkillsId");
+
+                    b.ToTable("CombatantDTOSkillDTO");
+                });
+
+            modelBuilder.Entity("SessionAssistant.Shared.DTOs.Combat.CombatantDTO", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("CanDodge")
+                    b.Property<int>("ActPriority")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("CanParry")
+                    b.Property<int>("Attacks")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EncounterId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("HasCompletedRound")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Initiative")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -34,37 +58,9 @@ namespace SessionAssistant.API.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Characters");
+                    b.HasIndex("EncounterId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CanDodge = true,
-                            CanParry = true,
-                            Name = "Gerlach Bauer"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CanDodge = false,
-                            CanParry = true,
-                            Name = "Roborbor"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CanDodge = false,
-                            CanParry = false,
-                            Name = "Pan Robak"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CanDodge = true,
-                            CanParry = true,
-                            Name = "Chad Poggington"
-                        });
+                    b.ToTable("Combatants", (string)null);
                 });
 
             modelBuilder.Entity("SessionAssistant.Shared.DTOs.Combat.EncounterDTO", b =>
@@ -73,96 +69,88 @@ namespace SessionAssistant.API.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("ActingInitiative")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ActingPriority")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("CurrentRound")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Encounters");
+                    b.ToTable("Encounters", (string)null);
 
                     b.HasData(
                         new
                         {
                             Id = 1,
+                            ActingInitiative = 100,
+                            ActingPriority = 0,
                             CurrentRound = 1
                         },
                         new
                         {
                             Id = 2,
+                            ActingInitiative = 100,
+                            ActingPriority = 0,
                             CurrentRound = 1
                         });
                 });
 
+            modelBuilder.Entity("SessionAssistant.Shared.DTOs.Combat.SkillDTO", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Cooldown")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Skills", (string)null);
+                });
+
+            modelBuilder.Entity("CombatantDTOSkillDTO", b =>
+                {
+                    b.HasOne("SessionAssistant.Shared.DTOs.Combat.CombatantDTO", null)
+                        .WithMany()
+                        .HasForeignKey("CombatantsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SessionAssistant.Shared.DTOs.Combat.SkillDTO", null)
+                        .WithMany()
+                        .HasForeignKey("SkillsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SessionAssistant.Shared.DTOs.Combat.CombatantDTO", b =>
+                {
+                    b.HasOne("SessionAssistant.Shared.DTOs.Combat.EncounterDTO", null)
+                        .WithMany("Combatants")
+                        .HasForeignKey("EncounterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("SessionAssistant.Shared.DTOs.Combat.EncounterDTO", b =>
                 {
-                    b.OwnsMany("SessionAssistant.Shared.DTOs.Combat.CombatantDTO", "Combatants", b1 =>
-                        {
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("Attacks")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<bool>("CanAct")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("EncounterDTOId")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("Initiative")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasColumnType("TEXT");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("EncounterDTOId");
-
-                            b1.ToTable("Combatants", (string)null);
-
-                            b1.WithOwner()
-                                .HasForeignKey("EncounterDTOId");
-
-                            b1.OwnsMany("SessionAssistant.Shared.DTOs.Combat.SkillDTO", "Skills", b2 =>
-                                {
-                                    b2.Property<int>("Id")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("INTEGER");
-
-                                    b2.Property<int>("CombatantDTOId")
-                                        .HasColumnType("INTEGER");
-
-                                    b2.Property<int>("Cooldown")
-                                        .HasColumnType("INTEGER");
-
-                                    b2.Property<string>("Description")
-                                        .IsRequired()
-                                        .HasColumnType("TEXT");
-
-                                    b2.Property<string>("Icon")
-                                        .IsRequired()
-                                        .HasColumnType("TEXT");
-
-                                    b2.Property<string>("Name")
-                                        .IsRequired()
-                                        .HasColumnType("TEXT");
-
-                                    b2.HasKey("Id");
-
-                                    b2.HasIndex("CombatantDTOId");
-
-                                    b2.ToTable("Skills", (string)null);
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("CombatantDTOId");
-                                });
-
-                            b1.Navigation("Skills");
-                        });
-
                     b.Navigation("Combatants");
                 });
 #pragma warning restore 612, 618

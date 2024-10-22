@@ -38,7 +38,6 @@ public class EncounterHub : Hub<IEncounterClient>
         await Clients.All.ReceiveMessage($"({user}) {message}");
     }
 }
-
 public interface IEncounterClient
 {
     Task UpdateEncounter();

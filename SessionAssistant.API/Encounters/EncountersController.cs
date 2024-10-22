@@ -11,6 +11,7 @@ namespace SessionAssistant.API.Combat
     [ApiController]
     public class EncountersController(
         SessionAssistantReadDbContext readDbContext,
+        SessionAssistantWriteDbContext writeDbContext,
         IHubContext<EncounterHub, IEncounterClient> hubContext)
         : ControllerBase
     {
@@ -18,85 +19,71 @@ namespace SessionAssistant.API.Combat
         [HttpGet("{id}")]
         public async Task<ActionResult<EncounterDTO>> GetEncounterDTO(int id)
         {
-            var encounterDTO = await readDbContext.Encounters.FindAsync(id);
-
-            if (encounterDTO == null)
+            var encounter = await readDbContext
+                .Encounters
+                .AsNoTracking()
+                .Where(e => e.Id == id)
+                .Include(e => e.Combatants)
+                .FirstOrDefaultAsync();
+            if (encounter == default(EncounterDTO))
             {
                 return NotFound();
             }
-
-            return encounterDTO;
+            
+            return encounter;
         }
-        
         // PUT: api/Encounters/5/join
         [HttpPut("{id}/join")]
-        public async Task<ActionResult<CombatantDTO>> JoinEncounter(int id, [FromBody]CombatantDTO combatant)
+        public async Task<ActionResult<CombatantDTO>> JoinEncounter(int id, [FromBody]CombatantDTO combatantData)
         {
-            var encounterDTO = await readDbContext.Encounters.FindAsync(id);
-
-            if (encounterDTO == null)
+            var encounter = await writeDbContext.Encounters.FindAsync(id);
+            if (encounter == null)
             {
                 return NotFound();
             }
-            encounterDTO.Combatants.Add(combatant);
-            await readDbContext.SaveChangesAsync();
+            var combatant = encounter.EnterCombat(combatantData.Name, combatantData.Initiative, combatantData.Attacks);
+            await writeDbContext.SaveChangesAsync();
             await hubContext.Clients.All.UpdateEncounter();
-            return combatant;
+            combatantData.Id = combatant.Id;
+            return combatantData;
         }
-
+        public record EndTurnPayload(int CombatantId, bool UsedMultiAttack);
         [HttpPut("{id}/endTurn")]
-        public async Task<IActionResult> EndTurn(int id, [FromBody] CombatantDTO combatant)
+        public async Task<IActionResult> EndTurn(int id, [FromBody]EndTurnPayload payload)
         {
-            var encounterDTO = await readDbContext.Encounters.FindAsync(id);
-            var dbCombatant = encounterDTO.Combatants.SingleOrDefault(c => c.Id == combatant.Id);
-            if (dbCombatant == null)
+            var encounter = await writeDbContext.Encounters.FindAsync(id);
+            if (encounter == null)
+            {
                 return NotFound();
+            }
             
+            encounter.EndTurn(payload.CombatantId, payload.UsedMultiAttack);
+            await writeDbContext.SaveChangesAsync();
+            await hubContext.Clients.All.UpdateEncounter();
             return Ok();
         }
-        
-        // PUT: api/Encounters/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEncounterDTO(int id, EncounterDTO encounterDTO)
-        {
-            if (id != encounterDTO.Id)
-            {
-                return BadRequest();
-            }
-
-            readDbContext.Entry(encounterDTO).State = EntityState.Modified;
-
-            try
-            {
-                await readDbContext.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EncounterDTOExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Encounters
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        public record NewEncounterData(string Name);
         [HttpPost]
-        public async Task<ActionResult<EncounterDTO>> PostEncounterDTO(EncounterDTO encounterDTO)
+        public async Task<ActionResult<EncounterDTO>> PostEncounterDTO([FromBody]NewEncounterData encounterData)
         {
-            readDbContext.Encounters.Add(encounterDTO);
-            await readDbContext.SaveChangesAsync();
-
-            return CreatedAtAction("GetEncounterDTO", new { id = encounterDTO.Id }, encounterDTO);
+            var encounter = new Encounter();
+            writeDbContext.Encounters.Add(encounter);
+            await writeDbContext.SaveChangesAsync();
+            return new EncounterDTO()
+            {
+                Id = encounter.Id,
+                ActingInitiative = encounter.ActingInitiative,
+                ActingPriority = encounter.ActingPriority,
+                CurrentRound = encounter.CurrentRound,
+                Combatants = new List<CombatantDTO>(),
+            };
         }
 
+        
+        
+        
         // DELETE: api/Encounters/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEncounterDTO(int id)
@@ -111,11 +98,6 @@ namespace SessionAssistant.API.Combat
             await readDbContext.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool EncounterDTOExists(int id)
-        {
-            return readDbContext.Encounters.Any(e => e.Id == id);
         }
     }
 }
