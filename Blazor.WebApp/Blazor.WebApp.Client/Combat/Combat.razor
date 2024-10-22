@@ -7,8 +7,8 @@
 @inject NavigationManager NavigationManager
 @implements IAsyncDisposable
 
-<div class="d-flex flex-grow-1 gap-4">
     <MudText Typo="Typo.h3">Combat Hub</MudText>
+<div class="d-flex flex-grow-1 gap-4">
     @if (_hubConnection is null)
     {
     <MudText Typo="Typo.h1">Loading..</MudText>
@@ -139,8 +139,9 @@
     private async Task ConnectToCombatHub()
     {
         _messages.Add("Joining encounter..");
+        StateHasChanged();
         _hubConnection = new HubConnectionBuilder()
-            .WithUrl("http://localhost:5039/combathub")
+            .WithUrl("http://localhost:5039/encounterhub")
             .Build();
         _hubConnection.On<string>("ReceiveMessage", message =>
         {

@@ -9,7 +9,7 @@ using SessionAssistant.API.Persistence;
 
 namespace SessionAssistant.API.Persistence.Migrations
 {
-    [DbContext(typeof(SessionAssistantDbContext))]
+    [DbContext(typeof(SessionAssistantReadDbContext))]
     [Migration("20241019162135_UpdatedRelationships")]
     partial class UpdatedRelationships
     {

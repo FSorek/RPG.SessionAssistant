@@ -4,11 +4,11 @@ using SessionAssistant.Shared.DTOs.Combat;
 
 namespace Blazor.WebApp.Hubs;
 
-public class CombatHub : Hub<ICombatClient>
+public class EncounterHub : Hub<IEncounterClient>
 {
     private static List<(string user, string message)> _messageHistory = [];
     
-    public async Task EnterCombat(int combatantId, ICombatServer combatServer)
+    public async Task EnterCombat(int combatantId)
     {
         await Clients.All.UpdateEncounter();
         await Clients.All.ReceiveMessage($"{combatantId} joined the combat");
@@ -39,12 +39,7 @@ public class CombatHub : Hub<ICombatClient>
     }
 }
 
-public interface ICombatServer
-{
-    Task<CombatantDTO> GetCombatantAsync(int combatantId);
-}
-
-public interface ICombatClient
+public interface IEncounterClient
 {
     Task UpdateEncounter();
     Task ReceiveMessage(string message);

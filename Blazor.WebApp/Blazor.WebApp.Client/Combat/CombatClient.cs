@@ -12,7 +12,7 @@ public class CombatClient(HttpClient httpClient)
 
     public async Task<CombatantDTO> JoinCombat(int id, CombatantDTO combatant)
     {
-        var response = await httpClient.PostAsJsonAsync($"api/encounters/join/{id}", combatant);
+        var response = await httpClient.PutAsJsonAsync($"api/encounters/{id}/join", combatant);
         return await response.Content.ReadFromJsonAsync<CombatantDTO>();
     }
 }

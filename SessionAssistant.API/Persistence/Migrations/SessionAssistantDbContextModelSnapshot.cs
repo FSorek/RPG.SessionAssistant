@@ -8,7 +8,7 @@ using SessionAssistant.API.Persistence;
 
 namespace SessionAssistant.API.Persistence.Migrations
 {
-    [DbContext(typeof(SessionAssistantDbContext))]
+    [DbContext(typeof(SessionAssistantReadDbContext))]
     partial class SessionAssistantDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

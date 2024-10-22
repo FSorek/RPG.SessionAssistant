@@ -6,7 +6,7 @@ using SessionAssistant.Shared.DTOs.Combat;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<SessionAssistantDbContext>(opt =>
+builder.Services.AddDbContext<SessionAssistantReadDbContext>(opt =>
 {
     opt.UseSqlite(string.Format("Filename={0}/SessionAssistant.db", AppDomain.CurrentDomain.BaseDirectory));
 });
@@ -32,6 +32,6 @@ if (app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 app.UseCors();
 app.UseAuthorization();
-app.MapHub<CombatHub>("/combathub");
+app.MapHub<EncounterHub>("/encounterhub");
 app.MapControllers();
 app.Run();

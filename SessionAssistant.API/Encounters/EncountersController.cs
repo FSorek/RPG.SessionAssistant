@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Blazor.WebApp.Hubs;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -15,28 +10,15 @@ namespace SessionAssistant.API.Combat
     [Route("api/[controller]")]
     [ApiController]
     public class EncountersController(
-        SessionAssistantDbContext dbContext,
-        IHubContext<CombatHub, ICombatClient> hubContext)
+        SessionAssistantReadDbContext readDbContext,
+        IHubContext<EncounterHub, IEncounterClient> hubContext)
         : ControllerBase
     {
-        private static EncounterDTO _encounter = new EncounterDTO()
-        {
-            Id = 1,
-            Combatants = new List<CombatantDTO>(),
-            CurrentRound = 1
-        };
-        // GET: api/Encounters
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<EncounterDTO>>> GetEncounters()
-        {
-            return await dbContext.Encounters.ToListAsync();
-        }
-
         // GET: api/Encounters/5
         [HttpGet("{id}")]
         public async Task<ActionResult<EncounterDTO>> GetEncounterDTO(int id)
         {
-            var encounterDTO = await dbContext.Encounters.FindAsync(id);
+            var encounterDTO = await readDbContext.Encounters.FindAsync(id);
 
             if (encounterDTO == null)
             {
@@ -46,21 +28,31 @@ namespace SessionAssistant.API.Combat
             return encounterDTO;
         }
         
-        // POST: api/Encounters/join/5
-        [HttpPost("join/{id}")]
+        // PUT: api/Encounters/5/join
+        [HttpPut("{id}/join")]
         public async Task<ActionResult<CombatantDTO>> JoinEncounter(int id, [FromBody]CombatantDTO combatant)
         {
-            var encounterDTO = await dbContext.Encounters.FindAsync(id);
+            var encounterDTO = await readDbContext.Encounters.FindAsync(id);
 
             if (encounterDTO == null)
             {
                 return NotFound();
             }
-            dbContext.Entry(encounterDTO).State = EntityState.Modified;
             encounterDTO.Combatants.Add(combatant);
-            await dbContext.SaveChangesAsync();
+            await readDbContext.SaveChangesAsync();
             await hubContext.Clients.All.UpdateEncounter();
             return combatant;
+        }
+
+        [HttpPut("{id}/endTurn")]
+        public async Task<IActionResult> EndTurn(int id, [FromBody] CombatantDTO combatant)
+        {
+            var encounterDTO = await readDbContext.Encounters.FindAsync(id);
+            var dbCombatant = encounterDTO.Combatants.SingleOrDefault(c => c.Id == combatant.Id);
+            if (dbCombatant == null)
+                return NotFound();
+            
+            return Ok();
         }
         
         // PUT: api/Encounters/5
@@ -73,11 +65,11 @@ namespace SessionAssistant.API.Combat
                 return BadRequest();
             }
 
-            dbContext.Entry(encounterDTO).State = EntityState.Modified;
+            readDbContext.Entry(encounterDTO).State = EntityState.Modified;
 
             try
             {
-                await dbContext.SaveChangesAsync();
+                await readDbContext.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -99,8 +91,8 @@ namespace SessionAssistant.API.Combat
         [HttpPost]
         public async Task<ActionResult<EncounterDTO>> PostEncounterDTO(EncounterDTO encounterDTO)
         {
-            dbContext.Encounters.Add(encounterDTO);
-            await dbContext.SaveChangesAsync();
+            readDbContext.Encounters.Add(encounterDTO);
+            await readDbContext.SaveChangesAsync();
 
             return CreatedAtAction("GetEncounterDTO", new { id = encounterDTO.Id }, encounterDTO);
         }
@@ -109,21 +101,21 @@ namespace SessionAssistant.API.Combat
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEncounterDTO(int id)
         {
-            var encounterDTO = await dbContext.Encounters.FindAsync(id);
+            var encounterDTO = await readDbContext.Encounters.FindAsync(id);
             if (encounterDTO == null)
             {
                 return NotFound();
             }
 
-            dbContext.Encounters.Remove(encounterDTO);
-            await dbContext.SaveChangesAsync();
+            readDbContext.Encounters.Remove(encounterDTO);
+            await readDbContext.SaveChangesAsync();
 
             return NoContent();
         }
 
         private bool EncounterDTOExists(int id)
         {
-            return dbContext.Encounters.Any(e => e.Id == id);
+            return readDbContext.Encounters.Any(e => e.Id == id);
         }
     }
 }
