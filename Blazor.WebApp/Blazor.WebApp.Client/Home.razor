@@ -1,0 +1,27 @@
+﻿@page "/"
+@rendermode InteractiveWebAssembly
+@inject NavigationManager NavigationManager
+<PageTitle>WH Fantasy Combat</PageTitle>
+
+<MudText Typo="Typo.h3">Wybierz opcję poniżej aby dołączyć do walki</MudText>
+<div class="d-flex flex-grow-1 gap-4">
+    <MudPaper>
+        <MudNumericField @bind-Value="_userId">Uzytkownik</MudNumericField>
+        <MudButton 
+            Variant="Variant.Filled" 
+            Color="Color.Primary" 
+            OnClick="NavigateToEncounter"
+            Size="Size.Large">Gracz</MudButton>
+    </MudPaper>
+
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="true">[WIP] Game Master</MudButton>
+</div>
+
+@code
+{
+    private int _userId = 1;
+    private void NavigateToEncounter()
+    {
+        NavigationManager.NavigateTo($"combat/{_userId}");
+    }
+}

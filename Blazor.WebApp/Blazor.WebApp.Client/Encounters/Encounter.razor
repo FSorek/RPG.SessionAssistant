@@ -1,4 +1,4 @@
-﻿@page "/combat"
+﻿@page "/combat/{userId:int}"
 @using Blazor.WebApp.Client.Combat
 @using Bogus
 @using Microsoft.AspNetCore.SignalR.Client
@@ -17,50 +17,66 @@
     else
     {
         <MudPaper Class="flex-auto py-8 mud-theme-primary" Width="20%" Elevation="0">
-        <MudCard Class="pa-3 mx-5 flex-auto d-flex" Outlined="true" >
+        @if (_playerCombatant == null)
+        {
+            <MudButton Variant="Variant.Outlined" OnClick="CreateNewCombatant">Create New</MudButton>
+        }
+        else
+        {
+            <MudCard Class="pa-3 mx-5 flex-auto d-flex" Outlined="true" >
             <MudCardHeader>
                 <CardHeaderAvatar>
                     <MudAvatar Color="Color.Success">G</MudAvatar>
                 </CardHeaderAvatar>
                 <CardHeaderContent>
-                    <MudText Typo="Typo.h5">@PlayerCombatant.Name</MudText>
+                    <MudText Typo="Typo.h5">@_playerCombatant.Name</MudText>
                 </CardHeaderContent>
                 <CardHeaderActions>
                     <MudPaper Class="pa-3 border-2 border-dashed mud-border-primary" Outlined="true" Elevation="4">
-                        <MudText Typo="Typo.subtitle2">@PlayerCombatant.Initiative</MudText>
+                        <MudText Typo="Typo.subtitle2">@_playerCombatant.Initiative</MudText>
                     </MudPaper>
                 </CardHeaderActions>
             </MudCardHeader>
             <MudDivider />
             <MudCardContent Class="align-self-start">
                 <MudPaper Width="40%">
-                    <MudNumericField Label="Ataki" @bind-Value="PlayerCombatant.Attacks" Variant="Variant.Filled"
+                    <MudNumericField Label="Ataki" @bind-Value="_playerCombatant.Attacks" Variant="Variant.Filled"
                                      Min="1" Max="5"/>
                 </MudPaper>
             </MudCardContent>
             <MudDivider />
             <MudCardActions>
                 <MudGrid>
-                    <MudItem xs="4">
-                        <MudStack>
-                            <MudButton Variant="Variant.Outlined">Wielokrotny</MudButton>
-                            <MudButton Variant="Variant.Outlined">Opóźnienie</MudButton>
-                        </MudStack>
-                    </MudItem>
-                    <MudItem xs="4">
-                        <MudStack>
-                            @foreach (var skill in PlayerCombatant.Skills)
-                            {
-                                <MudButton Variant="Variant.Outlined">@skill.Name</MudButton>
-                            }
-                        </MudStack>
-                    </MudItem>
-                    <MudItem xs="4">
-                        <MudButton OnClick="JoinCombat" Variant="Variant.Outlined">Ogłuszenie</MudButton>
-                    </MudItem>
+                    @if (_encounter.Combatants.Any(c => c.Id == _playerCombatant.Id))
+                    {
+                        <MudItem xs="4">
+                            <MudStack>
+                                <MudButton Variant="Variant.Outlined">Wielokrotny</MudButton>
+                                <MudButton Variant="Variant.Outlined">Opóźnienie</MudButton>
+                            </MudStack>
+                        </MudItem>
+                        <MudItem xs="4">
+                            <MudStack>
+                                @foreach (var skill in _playerCombatant.Skills)
+                                {
+                                    <MudButton Variant="Variant.Outlined">@skill.Name</MudButton>
+                                }
+                            </MudStack>
+                        </MudItem>
+                        <MudItem xs="4">
+                            <MudButton Variant="Variant.Outlined">Ogłuszenie</MudButton>
+                        </MudItem>
+                    }
+                    else
+                    {
+                        <MudItem xs="12">
+                            <MudButton Size="Size.Large" OnClick="JoinCombat" Variant="Variant.Outlined">Dołącz</MudButton>
+                        </MudItem>
+                    }
                 </MudGrid>
             </MudCardActions>
         </MudCard>
+        }
     </MudPaper>
     <MudPaper Class="flex-auto py-8 mud-theme-primary" Width="60%" Elevation="0">
         <MudDataGrid Items="@_encounter.Combatants" RowStyleFunc="RowStyleFunc" Class="pa-3 mx-5 align-content-start" >
@@ -96,12 +112,12 @@
     }
 </div>
 @code {
-
-    public CombatantDTO PlayerCombatant { get; set; } = new CombatantDTO();
+    [Parameter]
+    public int UserId { get; set; }
     private readonly List<string> _messages = [];
+    private CombatantDTO? _playerCombatant;
     private EncounterDTO _encounter = new EncounterDTO();
     private HubConnection _hubConnection;
-    
     
     protected override void OnInitialized()
     {
@@ -113,28 +129,14 @@
     {
         if (!firstRender)
             return;
-        int combatantIds = 0;
-        var testCombatants = new Faker<CombatantDTO>()
-            .RuleFor(c => c.Id, f => combatantIds++)
-            .RuleFor(c => c.Name, f => f.Name.FullName())
-            .RuleFor(c => c.Initiative, f => f.Random.Number(1, 10) + f.Random.Number(21, 50))
-            .RuleFor(c => c.HasCompletedRound, f => false)
-            .RuleFor(c => c.Attacks, f => f.Random.Number(1, 3))
-            .RuleFor(c => c.Skills, f => 
-                new List<SkillDTO>()
-                {
-                    new(){Cooldown = 1.OrDefault(f, .7f), Name = "Unik", Description = "Unik tooltip", Icon = Icons.Material.Filled.Bolt},
-                    new(){Cooldown = 1, Name = "Parowanie", Description = "Parowanie tooltip stonks", Icon = Icons.Material.Filled.DoNotTouch},
-                });
         
-        PlayerCombatant = testCombatants.Generate();
         await UpdateEncounter();
         await ConnectToCombatHub();
     }
 
     private async Task JoinCombat()
     {
-        PlayerCombatant = await HttpEncounterClient.JoinCombat(1, PlayerCombatant);
+        _playerCombatant = await HttpEncounterClient.JoinCombat(1, _playerCombatant, UserId);
     }
 
     private async Task ConnectToCombatHub()
@@ -177,7 +179,8 @@
             return "";
         if(_encounter.Combatants
            .Where(c => c.Initiative == _encounter.ActingInitiative 
-                                 && c.ActPriority == _encounter.ActingPriority)
+                                 && c.ActPriority == _encounter.ActingPriority
+                                 && !c.HasCompletedRound)
            .Contains(item))
             return $"background-color:{Colors.Purple.Darken4}";
         return "";
@@ -186,16 +189,31 @@
     private async Task UpdateEncounter()
     {
         _encounter = await HttpEncounterClient.GetEncounterAsync(1);
+        _playerCombatant = await HttpEncounterClient.GetCombatantForUser(UserId);
         StateHasChanged();
     }
 
     
     private void OnClickDevEndTurn(MouseEventArgs obj)
     {
-        _encounter.Combatants.Single(c => c.Id == _encounter.Combatants
-            .Where(c => c.HasCompletedRound)
-            .MaxBy(c => c.Initiative)!.Id).HasCompletedRound = false;
-        StateHasChanged();
+        
     }
 
+    private void CreateNewCombatant()
+    {
+        var testCombatants = new Faker<CombatantDTO>()
+            .RuleFor(c => c.Id, f => 0)
+            .RuleFor(c => c.Name, f => f.Name.FullName())
+            .RuleFor(c => c.Initiative, f => f.Random.Number(1, 10) + f.Random.Number(21, 50))
+            .RuleFor(c => c.HasCompletedRound, f => false)
+            .RuleFor(c => c.Attacks, f => f.Random.Number(1, 3))
+            .RuleFor(c => c.Skills, f => 
+                new List<SkillDTO>()
+                {
+                    new(){Cooldown = 1.OrDefault(f, .7f), Name = "Unik", Description = "Unik tooltip", Icon = Icons.Material.Filled.Bolt},
+                    new(){Cooldown = 1, Name = "Parowanie", Description = "Parowanie tooltip stonks", Icon = Icons.Material.Filled.DoNotTouch},
+                });
+        
+        _playerCombatant = testCombatants.Generate();
+    }
 }

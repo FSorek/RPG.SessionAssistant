@@ -9,22 +9,22 @@ public class Encounter
     public IReadOnlyCollection<Combatant> Combatants => _combatants;
     private readonly List<Combatant> _combatants = [];
 
-    public Combatant EnterCombat(string name, int initiative, int attacks)
+    public Combatant EnterCombat(string name, int initiative, int attacks, int userId)
     {
-        var newCombatant = new Combatant(name, initiative, attacks);
+        var newCombatant = new Combatant(name, initiative, attacks, userId);
         _combatants.Add(newCombatant);
         CalculateActingValues();
         return newCombatant;
     }
-
     private void CalculateActingValues()
     {
-        ActingInitiative = _combatants
-            .Where(c => !c.HasCompletedRound)
-            .Max(c => c.Initiative);
         ActingPriority = _combatants
             .Where(c => !c.HasCompletedRound)
             .Min(c => c.ActPriority);
+        ActingInitiative = _combatants
+            .Where(c => !c.HasCompletedRound
+                        && c.ActPriority == ActingPriority)
+            .Max(c => c.Initiative);
     }
     public void EndTurn(int combatantId, bool usedMultiattack = false)
     {

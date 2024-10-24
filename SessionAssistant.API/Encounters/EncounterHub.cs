@@ -6,14 +6,6 @@ namespace Blazor.WebApp.Hubs;
 
 public class EncounterHub : Hub<IEncounterClient>
 {
-    private static List<(string user, string message)> _messageHistory = [];
-    
-    public async Task EnterCombat(int combatantId)
-    {
-        await Clients.All.UpdateEncounter();
-        await Clients.All.ReceiveMessage($"{combatantId} joined the combat");
-    }
-
     public override async Task OnConnectedAsync()
     {
         var feature = Context.Features.Get<IHttpConnectionFeature>();
@@ -31,7 +23,8 @@ public class EncounterHub : Hub<IEncounterClient>
             await SendMessageToAllAsync(user, "Disconnected (Connection closed)");
         else await SendMessageToAllAsync(user, $"Disconnected ({exception.Message})");
     }
-
+    
+    private static List<(string user, string message)> _messageHistory = [];
     private async Task SendMessageToAllAsync(string user, string message)
     {
         _messageHistory.Add((user, message));
