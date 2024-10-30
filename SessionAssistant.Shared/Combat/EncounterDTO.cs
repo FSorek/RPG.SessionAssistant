@@ -6,5 +6,5 @@ public class EncounterDTO
     public int CurrentRound { get; set; } 
     public int ActingInitiative { get; set; }
     public int ActingPriority { get; set; }
-    public IList<CombatantDTO> Combatants { get; set; } = [];
+    public IEnumerable<CombatantDTO> Combatants { get; set; } = [];
 }

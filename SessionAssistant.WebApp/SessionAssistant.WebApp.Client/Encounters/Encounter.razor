@@ -116,7 +116,10 @@
     public int UserId { get; set; }
     private readonly List<string> _messages = [];
     private CombatantDTO? _playerCombatant;
-    private EncounterDTO _encounter = new EncounterDTO();
+    private EncounterDTO _encounter = new EncounterDTO()
+    {
+        Id = 1,
+    };
     private HubConnection _hubConnection;
     
     protected override void OnInitialized()
@@ -136,7 +139,7 @@
 
     private async Task JoinCombat()
     {
-        _playerCombatant = await HttpEncounterClient.CreateEncounterCombatant(_encounter.Id, _playerCombatant, UserId);
+        _playerCombatant = await HttpEncounterClient.CreateEncounterCombatant(1, _playerCombatant, UserId);
     }
 
     private async Task ConnectToCombatHub()

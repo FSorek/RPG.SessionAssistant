@@ -9,30 +9,15 @@ using SessionAssistant.API.Persistence;
 
 namespace SessionAssistant.API.Persistence.Migrations
 {
-    [DbContext(typeof(SessionAssistantReadDbContext))]
-    partial class SessionAssistantDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(AppDbContext))]
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
 
-            modelBuilder.Entity("CombatantDTOSkillDTO", b =>
-                {
-                    b.Property<int>("CombatantsId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SkillsId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("CombatantsId", "SkillsId");
-
-                    b.HasIndex("SkillsId");
-
-                    b.ToTable("CombatantDTOSkillDTO");
-                });
-
-            modelBuilder.Entity("SessionAssistant.Shared.DTOs.Combat.CombatantDTO", b =>
+            modelBuilder.Entity("SessionAssistant.API.Persistence.Combatant", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -67,7 +52,7 @@ namespace SessionAssistant.API.Persistence.Migrations
                     b.ToTable("Combatants", (string)null);
                 });
 
-            modelBuilder.Entity("SessionAssistant.Shared.DTOs.Combat.EncounterDTO", b =>
+            modelBuilder.Entity("SessionAssistant.API.Persistence.Encounter", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -103,57 +88,16 @@ namespace SessionAssistant.API.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("SessionAssistant.Shared.DTOs.Combat.SkillDTO", b =>
+            modelBuilder.Entity("SessionAssistant.API.Persistence.Combatant", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Cooldown")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Icon")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Skills", (string)null);
-                });
-
-            modelBuilder.Entity("CombatantDTOSkillDTO", b =>
-                {
-                    b.HasOne("SessionAssistant.Shared.DTOs.Combat.CombatantDTO", null)
-                        .WithMany()
-                        .HasForeignKey("CombatantsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SessionAssistant.Shared.DTOs.Combat.SkillDTO", null)
-                        .WithMany()
-                        .HasForeignKey("SkillsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("SessionAssistant.Shared.DTOs.Combat.CombatantDTO", b =>
-                {
-                    b.HasOne("SessionAssistant.Shared.DTOs.Combat.EncounterDTO", null)
+                    b.HasOne("SessionAssistant.API.Persistence.Encounter", null)
                         .WithMany("Combatants")
                         .HasForeignKey("EncounterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SessionAssistant.Shared.DTOs.Combat.EncounterDTO", b =>
+            modelBuilder.Entity("SessionAssistant.API.Persistence.Encounter", b =>
                 {
                     b.Navigation("Combatants");
                 });

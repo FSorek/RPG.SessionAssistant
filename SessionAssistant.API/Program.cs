@@ -7,11 +7,7 @@ using SessionAssistant.Shared.DTOs.Combat;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<SessionAssistantReadDbContext>(opt =>
-{
-    opt.UseSqlite(string.Format("Filename={0}/SessionAssistant.db", AppDomain.CurrentDomain.BaseDirectory));
-});
-builder.Services.AddDbContext<SessionAssistantWriteDbContext>(opt =>
+builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseSqlite(string.Format("Filename={0}/SessionAssistant.db", AppDomain.CurrentDomain.BaseDirectory));
 });
