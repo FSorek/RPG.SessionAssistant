@@ -20,7 +20,7 @@ builder.Services.AddControllers();
 builder.Services.AddCors(
     options => options.AddDefaultPolicy(
         policy => policy.WithOrigins(["http://localhost:5039", 
-                "http://localhost:5255"])
+                "http://localhost:5255", "https://localhost:7139"])
             .AllowAnyMethod()
             .AllowAnyHeader()));
 builder.Services.AddEndpointsApiExplorer();

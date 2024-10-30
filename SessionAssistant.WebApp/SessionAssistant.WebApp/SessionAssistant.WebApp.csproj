@@ -4,11 +4,12 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>Blazor.WebApp</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="MudBlazor" Version="8.0.0-preview.1" />
-        <ProjectReference Include="..\Blazor.WebApp.Client\Blazor.WebApp.Client.csproj"/>
+        <ProjectReference Include="..\SessionAssistant.WebApp.Client\SessionAssistant.WebApp.Client.csproj" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.10"/>
     </ItemGroup>
 

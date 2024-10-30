@@ -14,7 +14,7 @@ builder.Services.AddResponseCompression(options =>
 builder.Services.AddCors(
     options => options.AddPolicy(
         "server",
-        policy => policy.WithOrigins("http://localhost:5039")
+        policy => policy.WithOrigins("http://localhost:5039", "https://localhost:7139")
             .AllowAnyMethod()
             .AllowAnyHeader()));
 var app = builder.Build();

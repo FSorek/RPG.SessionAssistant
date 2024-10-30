@@ -14,7 +14,7 @@ public class SessionAssistantReadDbContext(DbContextOptions<SessionAssistantRead
         modelBuilder.Entity<EncounterDTO>()
             .HasMany(e => e.Combatants)
             .WithOne()
-            .HasForeignKey(c => c.EncounterId)
+            .HasForeignKey("EncounterId")
             .IsRequired();
         modelBuilder.Entity<EncounterDTO>()
             .ToTable("Encounters")

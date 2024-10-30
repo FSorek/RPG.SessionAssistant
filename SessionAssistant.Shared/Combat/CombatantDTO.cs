@@ -3,7 +3,6 @@
 public class CombatantDTO
 {
     public int Id { get; set; }
-    public int EncounterId { get; set; }
     public int? UserId { get; set; }
     public string Name { get; set; }
     public int Initiative { get; set; }

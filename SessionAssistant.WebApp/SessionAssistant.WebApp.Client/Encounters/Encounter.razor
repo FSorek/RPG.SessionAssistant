@@ -136,7 +136,7 @@
 
     private async Task JoinCombat()
     {
-        _playerCombatant = await HttpEncounterClient.JoinCombat(1, _playerCombatant, UserId);
+        _playerCombatant = await HttpEncounterClient.CreateEncounterCombatant(_encounter.Id, _playerCombatant, UserId);
     }
 
     private async Task ConnectToCombatHub()
@@ -188,8 +188,9 @@
 
     private async Task UpdateEncounter()
     {
-        _encounter = await HttpEncounterClient.GetEncounterAsync(1);
-        _playerCombatant = await HttpEncounterClient.GetCombatantForUser(UserId);
+        int joinedEncounterId = 1;
+        _encounter = await HttpEncounterClient.GetEncounterAsync(joinedEncounterId);
+        _playerCombatant = await HttpEncounterClient.GetCombatantForUser(joinedEncounterId, UserId);
         StateHasChanged();
     }
 
