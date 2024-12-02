@@ -1,25 +1,45 @@
 ﻿@page "/"
+@using Blazor.WebApp.Client.ApiClients
+@using SessionAssistant.Shared.Users
 @rendermode InteractiveWebAssembly
 @inject NavigationManager NavigationManager
+@inject SessionAssistantClient SessionAssistantClient
 <PageTitle>WH Fantasy Combat</PageTitle>
 
-<MudText Typo="Typo.h3">Wybierz opcję poniżej aby dołączyć do walki</MudText>
-<div class="d-flex flex-grow-1 gap-4">
-    <MudPaper>
-        <MudNumericField @bind-Value="_userId">Uzytkownik</MudNumericField>
-        <MudButton 
-            Variant="Variant.Filled" 
-            Color="Color.Primary" 
-            OnClick="NavigateToEncounter"
-            Size="Size.Large">Gracz</MudButton>
-    </MudPaper>
-
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="true">[WIP] Game Master</MudButton>
+@* <MudText Typo="Typo.h3">Wybierz opcję poniżej aby dołączyć do walki</MudText> *@
+@* <div class="d-flex flex-grow-1 gap-4"> *@
+@*     <MudPaper> *@
+@*         <MudNumericField @bind-Value="_userId">Uzytkownik</MudNumericField> *@
+@*         <MudButton  *@
+@*             Variant="Variant.Filled"  *@
+@*             Color="Color.Primary"  *@
+@*             OnClick="NavigateToEncounter" *@
+@*             Size="Size.Large">Gracz</MudButton> *@
+@*     </MudPaper> *@
+@* *@
+@*     <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="true">[WIP] Game Master</MudButton> *@
+@* </div> *@
+<div>
+    @if (_userId == null)
+    {
+        <MudText Typo="Typo.h6">Please select user profile</MudText>
+        <MudStack Row="true">
+            
+        </MudStack>
+    }
 </div>
-
 @code
 {
-    private int _userId = 1;
+    private int? _userId;
+    private IEnumerable<UserDTO> _users;
+    protected override async Task OnInitializedAsync()
+    {
+        if (_userId == null)
+        {
+            _users = await SessionAssistantClient.Users.GetAllUsersAsync();
+        }
+    }
+
     private void NavigateToEncounter()
     {
         NavigationManager.NavigateTo($"combat/{_userId}");

@@ -28,7 +28,7 @@ public class CombatantsController(
     [HttpGet]
     public async Task<ActionResult<CombatantDTO?>> GetForUser([FromQuery]int userId)
     {
-        var combatant = await dbContext.Combatants.FirstOrDefaultAsync(c => c.UserId == userId);
+        var combatant = await dbContext.Combatants.FirstOrDefaultAsync(c => c.PlayerId == userId);
         if (combatant is not null)
             return Ok(combatant.ToDTO());
         return NotFound();
@@ -42,26 +42,26 @@ public class CombatantsController(
             return NotFound();
         }
             
-        encounter.EndTurn(id, request.UsedMultiAttack);
+        //encounter.EndTurn(id, request.UsedMultiAttack);
         await dbContext.SaveChangesAsync();
         await hubContext.Clients.All.UpdateEncounter();
         return Ok();
     }
         
-    [HttpPost]
-    public async Task<ActionResult> Create(int encounterId, CreateCombatantRequest request)
-    {
-        var encounter = await dbContext.Encounters.FindAsync(encounterId);
-        if (encounter == null)
-            return BadRequest();
-            
-        var combatant = encounter.EnterCombat(request.Name, request.Initiative, request.Attacks, request.UserId);
-        await dbContext.SaveChangesAsync();
-        await hubContext.Clients.All.UpdateEncounter();
-        return CreatedAtAction(
-            nameof(Get),
-            new { id = combatant.Id },
-            combatant.ToDTO()
-        );
-    }
+    // [HttpPost]
+    // public async Task<ActionResult> Create(int encounterId, CreateCombatantRequest request)
+    // {
+    //     var encounter = await dbContext.Encounters.FindAsync(encounterId);
+    //     if (encounter == null)
+    //         return BadRequest();
+    //         
+    //     var combatant = encounter.EnterCombat(request.Name, request.Initiative, request.Attacks, request.UserId);
+    //     await dbContext.SaveChangesAsync();
+    //     await hubContext.Clients.All.UpdateEncounter();
+    //     return CreatedAtAction(
+    //         nameof(Get),
+    //         new { id = combatant.Id },
+    //         combatant.ToDTO()
+    //     );
+    // }
 }

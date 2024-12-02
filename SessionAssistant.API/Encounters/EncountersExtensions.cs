@@ -19,9 +19,25 @@ public static class EncountersExtensions
         new()
         {
             Id = encounter.Id,
-            CurrentRound = encounter.CurrentRound,
-            ActingInitiative = encounter.ActingInitiative,
-            ActingPriority = encounter.ActingPriority,
-            Combatants = encounter.Combatants.Select(c => c.ToDTO())
+            Name = encounter.Name,
+            ActingInitiative = encounter.Combat.ActingInitiative,
+            ActingPriority = encounter.Combat.ActingPriority,
+            CurrentRound = encounter.Combat.CurrentRound,
+            Combatants = encounter.Combat.Combatants.Select(c => c.ToDTO()).ToArray(),
+        };
+    public static CharacterDTO ToDTO(this Character character) =>
+        new()
+        {
+            Id = character.Id,
+            Name = character.Name,
+            Attacks = character.Attacks,
+            Abilities = character.KnownAbilities.Select(a => a.ToDTO())
+        };
+    public static AbilityDTO ToDTO(this Ability ability) =>
+        new()
+        {
+            Id = ability.Id,
+            Name = ability.Name,
+            Description = ability.Description
         };
 }

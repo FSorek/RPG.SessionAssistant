@@ -25,4 +25,8 @@
       <_ContentIncludedByDefault Remove="Pages\Counter.razor" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Login\" />
+    </ItemGroup>
+
 </Project>
